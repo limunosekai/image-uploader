@@ -2,6 +2,7 @@ const express = require("express");
 const multer = require("multer");
 const { v4: uuid } = require("uuid");
 const mime = require("mime-types");
+const cors = require("cors");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, "./uploads"),
@@ -23,10 +24,10 @@ const upload = multer({
 });
 
 const app = express();
-const PORT = 4000;
+const PORT = 4005;
 
 app.use("/uploads", express.static("uploads"));
-
+app.use(cors());
 app.post("/upload", upload.single("image"), (req, res) => {
   console.log(req.file);
   res.json(req.file);
