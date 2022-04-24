@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import client from "../client";
 import { toast } from "react-toastify";
-
+import { ImageContext } from "../context/ImageContext";
 import ProgressBar from "./ProgressBar";
 import "./UploadForm.css";
 
 const UploadForm = () => {
+  const [, setImages] = useContext(ImageContext);
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState("이미지 파일을 업로드 해주세요.");
   const [percent, setPercent] = useState(0);
@@ -32,6 +33,9 @@ const UploadForm = () => {
         onUploadProgress: (e) => {
           setPercent(Math.round((100 * e.loaded) / e.total));
         },
+      });
+      setImages((prev) => {
+        return [...prev, res.data];
       });
       toast.success("업로드 성공");
       setTimeout(() => {
