@@ -1,0 +1,15 @@
+.tool-bar-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.tool-bar-btn {
+  outline: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.tool-bar-btn:hover {
+  color: gray;
+}

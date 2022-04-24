@@ -1,16 +1,22 @@
 import React from "react";
-import UploadForm from "./components/UploadForm";
+import { Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ImageList from "./components/ImageList";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import MainPage from "./pages/MainPage";
+import ToolBar from "./components/ToolBar";
 
 const App = () => {
   return (
     <section style={{ maxWidth: "600px", margin: "0 auto" }}>
       <ToastContainer />
-      <h2>Image Uploader</h2>
-      <UploadForm />
-      <ImageList />
+      <ToolBar />
+      <Routes>
+        <Route path="/auth/login" element={<LoginPage />} />
+        <Route path="/auth/register" element={<RegisterPage />} />
+        <Route path="/*" element={<MainPage />} />
+      </Routes>
     </section>
   );
 };
