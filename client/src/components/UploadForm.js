@@ -25,7 +25,7 @@ const UploadForm = () => {
     const formData = new FormData();
     formData.append("image", file);
     try {
-      const res = await client.post("http://localhost:4005/upload", formData, {
+      const res = await client.post("http://localhost:4005/images", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
