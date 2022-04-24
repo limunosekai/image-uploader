@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const userRouter = Router();
 const User = require("../models/user");
-const { hash } = require("bcryptjs");
+const { hash, compare } = require("bcryptjs");
 
 userRouter.post("/register", async (req, res) => {
   try {
@@ -9,7 +9,7 @@ userRouter.post("/register", async (req, res) => {
       throw new Error("비밀번호는 최소 6자 이상!");
     }
     if (req.body.username.length < 3) {
-      throw new Error("닉네임은 최소 3자 이상!");
+      throw new Error("아이디는 최소 3자 이상!");
     }
     const hashedPassword = await hash(req.body.password, 10);
     await new User({
@@ -18,6 +18,22 @@ userRouter.post("/register", async (req, res) => {
       hashedPassword,
     }).save();
     res.json({ message: "user registered.." });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+userRouter.post("/login", async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.body.username });
+    if (!user) {
+      throw new Error("입력하신 정보가 올바르지 않습니다.");
+    }
+    const isValid = await compare(req.body.password, user.hashedPassword);
+    if (!isValid) {
+      throw new Error("입력하신 정보가 올바르지 않습니다.");
+    }
+    res.json({ message: "로그인 성공!" });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
