@@ -15,6 +15,7 @@ function ToolBar() {
       await axios.patch("/users/logout");
       setMe({});
       toast.success("로그아웃 성공!");
+      navigate("/");
     } catch (err) {
       toast.error(err.message);
     }
@@ -49,7 +50,7 @@ function ToolBar() {
           </>
         ) : (
           <button className="tool-bar-btn" type="button" onClick={handleLogout}>
-            로그아웃
+            {`로그아웃(${me.name})`}
           </button>
         )}
       </div>

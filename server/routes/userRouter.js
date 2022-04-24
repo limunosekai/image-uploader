@@ -47,6 +47,7 @@ userRouter.patch("/login", async (req, res) => {
       message: "로그인 성공!",
       sessionId: session._id,
       name: user.name,
+      username: user.username,
     });
   } catch (err) {
     res.status(400).json({ message: err.message });

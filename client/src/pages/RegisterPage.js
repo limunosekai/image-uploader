@@ -1,11 +1,13 @@
 import React, { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import CustomInput from "../components/CustomInput";
 import axios from "axios";
 import { toast } from "react-toastify";
 
 function RegisterPage() {
-  const [me, setMe] = useContext(AuthContext);
+  const [, setMe] = useContext(AuthContext);
+  const navigate = useNavigate();
   const [name, setname] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -34,6 +36,7 @@ function RegisterPage() {
         sessionId: res.data.sessionId,
       });
       toast.success("회원가입 성공!");
+      navigate("/");
     } catch (err) {
       toast.error(err.message);
     }
