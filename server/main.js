@@ -4,6 +4,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const { imageRouter } = require("./routes/imageRouter");
 const { userRouter } = require("./routes/userRouter");
+const { authenticate } = require("./middleware/authentication");
 
 const app = express();
 const PORT = process.env.PORT || 4005;
@@ -15,6 +16,7 @@ mongoose
     app.use("/uploads", express.static("uploads"));
     app.use(cors());
     app.use(express.json());
+    app.use(authenticate);
     app.use("/images", imageRouter);
     app.use("/users", userRouter);
     app.listen(PORT, () => console.log(`Listening on port ${PORT}...`));
