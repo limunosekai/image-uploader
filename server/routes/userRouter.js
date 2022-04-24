@@ -12,12 +12,18 @@ userRouter.post("/register", async (req, res) => {
       throw new Error("아이디는 최소 3자 이상!");
     }
     const hashedPassword = await hash(req.body.password, 10);
-    await new User({
+    const user = await new User({
       name: req.body.name,
       username: req.body.username,
       hashedPassword,
+      sessions: [{ createdAt: new Date() }],
     }).save();
-    res.json({ message: "user registered.." });
+    const session = user.sessions[0];
+    res.json({
+      message: "user registered..",
+      sessionId: session._id,
+      name: user.name,
+    });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -33,7 +39,14 @@ userRouter.post("/login", async (req, res) => {
     if (!isValid) {
       throw new Error("입력하신 정보가 올바르지 않습니다.");
     }
-    res.json({ message: "로그인 성공!" });
+    user.sessions.push({ createdAt: new Date() });
+    const session = user.sessions[user.sessions.length - 1];
+    await user.save();
+    res.json({
+      message: "로그인 성공!",
+      sessionId: session._id,
+      name: user.name,
+    });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
