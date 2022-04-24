@@ -17,7 +17,7 @@ function ToolBar() {
       toast.success("로그아웃 성공!");
       navigate("/");
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.response.data.message);
     }
   };
 

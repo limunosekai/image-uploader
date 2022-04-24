@@ -38,7 +38,7 @@ function RegisterPage() {
       toast.success("회원가입 성공!");
       navigate("/");
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.response.data.message);
     }
   };
 
