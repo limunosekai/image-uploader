@@ -1,10 +1,14 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
+import { AuthContext } from "./AuthContext";
 
 export const ImageContext = createContext();
 
 export const ImageProvider = ({ children }) => {
   const [images, setImages] = useState([]);
+  const [myImages, setMyImages] = useState([]);
+  const [isPublic, setIsPublic] = useState(true);
+  const [me] = useContext(AuthContext);
 
   useEffect(() => {
     axios
@@ -13,8 +17,30 @@ export const ImageProvider = ({ children }) => {
       .catch((err) => console.err(err));
   }, []);
 
+  useEffect(() => {
+    if (me?.sessionId) {
+      axios
+        .get("/users/me/images", {
+          headers: {
+            sessionid: me.sessionId,
+          },
+        })
+        .then((res) => setMyImages(res.data))
+        .catch((err) => console.err(err));
+    }
+  }, [me?.sessionId]);
+
   return (
-    <ImageContext.Provider value={[images, setImages]}>
+    <ImageContext.Provider
+      value={{
+        images,
+        setImages,
+        myImages,
+        setMyImages,
+        isPublic,
+        setIsPublic,
+      }}
+    >
       {children}
     </ImageContext.Provider>
   );

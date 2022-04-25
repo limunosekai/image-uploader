@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     if (me.sessionId) {
-      axios.defaults.headers.common.sessionId = me.sessionId;
+      axios.defaults.headers.common.sessionid = me.sessionId;
       localStorage.setItem("sessionId", me.sessionId);
     } else if (sessionId) {
       axios
@@ -25,12 +25,12 @@ export const AuthProvider = ({ children }) => {
         )
         .catch((err) => {
           localStorage.removeItem("sessionId");
-          delete axios.defaults.headers.common.sessionId;
+          delete axios.defaults.headers.common.sessionid;
         });
     } else {
-      delete axios.defaults.headers.common.sessionId;
+      delete axios.defaults.headers.common.sessionid;
     }
-  }, [me.sessionId]);
+  }, [me.sessionId, sessionId]);
 
   return (
     <AuthContext.Provider value={[me, setMe]}>{children}</AuthContext.Provider>
