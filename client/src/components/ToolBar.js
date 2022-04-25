@@ -14,6 +14,8 @@ function ToolBar() {
     try {
       await axios.patch("/users/logout");
       setMe({});
+      await delete axios.defaults.headers.common.sessionid;
+      await localStorage.removeItem("sessionId");
       toast.success("로그아웃 성공!");
       navigate("/");
     } catch (err) {

@@ -27,6 +27,9 @@ export const ImageProvider = ({ children }) => {
         })
         .then((res) => setMyImages(res.data))
         .catch((err) => console.err(err));
+    } else {
+      setMyImages([]);
+      setIsPublic(true);
     }
   }, [me?.sessionId]);
 
