@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import MainPage from "./pages/MainPage";
+import ImagePage from "./pages/ImagePage";
 import ToolBar from "./components/ToolBar";
 
 const App = () => {
@@ -15,6 +16,7 @@ const App = () => {
       <Routes>
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/auth/register" element={<RegisterPage />} />
+        <Route path="/images/:imageId" element={<ImagePage />} />
         <Route path="/*" element={<MainPage />} />
       </Routes>
     </section>
