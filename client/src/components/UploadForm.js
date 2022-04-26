@@ -12,7 +12,7 @@ const UploadForm = () => {
   const [percent, setPercent] = useState(0);
   const [imgSrc, setImgSrc] = useState(null);
   const [isPublic, setIsPublic] = useState(true);
-  console.log(isPublic);
+
   const handleImageSelect = (e) => {
     const imageFile = e.target.files[0];
     setFile(imageFile);

@@ -68,7 +68,7 @@ imageRouter.patch("/:imageId/like", async (req, res) => {
     const image = await Image.findOneAndUpdate(
       { _id: req.params.imageId },
       {
-        $addToSet: { likes: req.user.id },
+        $addToSet: { likes: req.user.username },
       },
       { new: true }
     );
@@ -90,7 +90,7 @@ imageRouter.patch("/:imageId/unlike", async (req, res) => {
     }
     const image = await Image.findOneAndUpdate(
       { _id: req.params.imageId },
-      { $pull: { likes: req.user.id } },
+      { $pull: { likes: req.user.username } },
       { new: true }
     );
     res.json(image);
