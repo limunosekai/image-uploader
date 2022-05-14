@@ -9,22 +9,28 @@ const user = require("../models/user");
 
 const fileUnlink = promisify(fs.unlink);
 
-imageRouter.post("/", upload.single("image"), async (req, res) => {
+imageRouter.post("/", upload.array("image", 5), async (req, res) => {
   try {
     if (!req.user) {
       throw new Error("권한이 없습니다.");
     }
-    const image = await new Image({
-      user: {
-        _id: req.user.id,
-        name: req.user.name,
-        username: req.user.username,
-      },
-      public: req.body.public,
-      key: req.file.filename,
-      __filename: req.file.originalname,
-    }).save();
-    res.json(image);
+    const images = await Promise.all(
+      req.files.map(async (file) => {
+        const image = await new Image({
+          user: {
+            _id: req.user.id,
+            name: req.user.name,
+            username: req.user.username,
+          },
+          public: req.body.public,
+          key: file.filename,
+          __filename: file.originalname,
+        }).save();
+        return image;
+      })
+    );
+
+    res.json(images);
   } catch (err) {
     console.error(err.message);
     res.status(400).json({ message: err.message });

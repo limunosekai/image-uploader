@@ -5,9 +5,14 @@
   border-radius: 10px;
   margin-bottom: 20px;
   display: flex;
+  flex-direction: column;
   position: relative;
   justify-content: center;
   align-items: center;
+}
+
+.file-drop > p {
+  margin: 0;
 }
 
 .file-drop > input {
@@ -38,6 +43,11 @@
 
 .submit-btn:hover {
   background-color: rgb(122, 25, 25);
+}
+
+.image-preview-wrapper {
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .image-preview {
