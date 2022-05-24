@@ -38,8 +38,21 @@ imageRouter.post("/", upload.array("image", 5), async (req, res) => {
 });
 
 imageRouter.get("/", async (req, res) => {
-  const images = await Image.find({ public: true });
-  res.json(images);
+  const { lastId } = req.query;
+  try {
+    if (lastId && !mongoose.isValidObjectId(lastId)) {
+      throw new Error("invalid lastId");
+    }
+    const images = await Image.find(
+      lastId ? { public: true, _id: { $lt: lastId } } : { public: true }
+    )
+      .sort({ _id: -1 })
+      .limit(20);
+    res.json(images);
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({ message: err.message });
+  }
 });
 
 imageRouter.delete("/:imageId", async (req, res) => {
