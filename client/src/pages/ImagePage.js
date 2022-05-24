@@ -8,12 +8,10 @@ import { toast } from "react-toastify";
 function ImagePage() {
   const { imageId } = useParams();
   const navigate = useNavigate();
-  const { images, myImages, setImages, setMyImages } = useContext(ImageContext);
+  const { images, setImages, setMyImages } = useContext(ImageContext);
   const [me] = useContext(AuthContext);
   const [hasLike, setHasLike] = useState(false);
-  const image =
-    images.find((img) => img._id === imageId) ||
-    myImages.find((img) => img._id === imageId);
+  const image = images.find((img) => img._id === imageId);
 
   useEffect(() => {
     if (me?.sessionId && image?.likes.includes(me.username)) {
@@ -62,8 +60,8 @@ function ImagePage() {
       }
       const res = await axios.delete(`/images/${imageId}`);
       toast.success(res.data.message);
-      setImages(deleteImages(images));
-      setMyImages(deleteImages(myImages));
+      setImages((prev) => deleteImages(prev));
+      setMyImages((prev) => deleteImages(prev));
       navigate("/");
     } catch (err) {
       toast.error(err.message);

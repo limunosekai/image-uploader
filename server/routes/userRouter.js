@@ -3,6 +3,7 @@ const userRouter = Router();
 const User = require("../models/user");
 const { hash, compare } = require("bcryptjs");
 const Image = require("../models/image");
+const mongoose = require("mongoose");
 
 userRouter.post("/register", async (req, res) => {
   try {
@@ -88,10 +89,20 @@ userRouter.get("/me", (req, res) => {
 
 userRouter.get("/me/images", async (req, res) => {
   try {
+    const { lastId } = req.query;
+    if (lastId && !mongoose.isValidObjectId(lastId)) {
+      throw new Error("invalid lastId");
+    }
     if (!req.user) {
       throw new Error("권한이 없습니다.");
     }
-    const images = await Image.find({ "user._id": req.user.id });
+    const images = await Image.find(
+      lastId
+        ? { "user._id": req.user.id, _id: { $lt: lastId } }
+        : { "user._id": req.user.id }
+    )
+      .sort({ _id: -1 })
+      .limit(20);
     res.json(images);
   } catch (err) {
     console.log(err);

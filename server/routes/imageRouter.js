@@ -38,8 +38,8 @@ imageRouter.post("/", upload.array("image", 5), async (req, res) => {
 });
 
 imageRouter.get("/", async (req, res) => {
-  const { lastId } = req.query;
   try {
+    const { lastId } = req.query;
     if (lastId && !mongoose.isValidObjectId(lastId)) {
       throw new Error("invalid lastId");
     }

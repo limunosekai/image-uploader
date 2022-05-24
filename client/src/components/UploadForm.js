@@ -49,14 +49,9 @@ const UploadForm = () => {
         },
       });
       if (isPublic) {
-        setImages((prev) => {
-          return [...prev, ...res.data];
-        });
-      } else {
-        setMyImages((prev) => {
-          return [...prev, ...res.data];
-        });
+        setImages((prev) => [...res.data, ...prev]);
       }
+      setMyImages((prev) => [...res.data, ...prev]);
       toast.success("업로드 성공");
       setTimeout(() => {
         setPercent(0);
@@ -79,7 +74,7 @@ const UploadForm = () => {
   const fileNames =
     previews.length === 0
       ? "이미지를 업로드해주세요"
-      : previews.map((preview) => <p>{preview.fileName}</p>);
+      : previews.map((preview, idx) => <p key={idx}>{preview.fileName}</p>);
 
   return (
     <form onSubmit={handleSubmit}>

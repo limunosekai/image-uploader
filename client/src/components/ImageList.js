@@ -6,7 +6,7 @@ import { ImageContext } from "../context/ImageContext";
 import "./ImageList.css";
 
 const ImageList = () => {
-  const { images, myImages, isPublic, setIsPublic, loadMoreImages } =
+  const { images, isPublic, setIsPublic, loadMoreImages } =
     useContext(ImageContext);
   const [me] = useContext(AuthContext);
   const elementRef = useRef(null);
@@ -25,31 +25,18 @@ const ImageList = () => {
     };
   }, [loadMoreImages]);
 
-  const imgList = isPublic
-    ? images.map((img, idx) => (
-        <Link
-          key={img.key}
-          to={`/images/${img._id}`}
-          ref={idx + 1 === images.length ? elementRef : undefined}
-        >
-          <img
-            src={`http://localhost:4005/uploads/${img.key}`}
-            alt={img.__filename}
-          />
-        </Link>
-      ))
-    : myImages.map((img, idx) => (
-        <Link
-          key={img.key}
-          to={`/images/${img._id}`}
-          ref={idx + 1 === myImages.length ? elementRef : undefined}
-        >
-          <img
-            src={`http://localhost:4005/uploads/${img.key}`}
-            alt={img.__filename}
-          />
-        </Link>
-      ));
+  const imgList = images.map((img, idx) => (
+    <Link
+      key={img.key}
+      to={`/images/${img._id}`}
+      ref={idx + 1 === images.length ? elementRef : undefined}
+    >
+      <img
+        src={`http://localhost:4005/uploads/${img.key}`}
+        alt={img.__filename}
+      />
+    </Link>
+  ));
 
   return (
     <div>
@@ -58,7 +45,7 @@ const ImageList = () => {
       </h3>
       {me?.sessionId && (
         <button type="button" onClick={() => setIsPublic(!isPublic)}>
-          {isPublic ? "공개" : "내"} 사진 보기
+          {isPublic ? "내" : "공개"} 사진 보기
         </button>
       )}
       <div className="image-list-container">{imgList}</div>

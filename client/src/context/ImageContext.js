@@ -25,7 +25,11 @@ export const ImageProvider = ({ children }) => {
       loadingRef.current = true;
       axios
         .get(url)
-        .then((res) => setImages((prev) => [...prev, ...res.data]))
+        .then((res) =>
+          isPublic
+            ? setImages((prev) => [...prev, ...res.data])
+            : setMyImages((prev) => [...prev, ...res.data])
+        )
         .catch((err) => console.log(err))
         .finally(() => (loadingRef.current = false));
     }
@@ -53,15 +57,14 @@ export const ImageProvider = ({ children }) => {
 
   const loadMoreImages = useCallback(() => {
     if (!lastId || loadingRef.current) return;
-    setImageUrl(`/images?lastId=${lastId}`);
-  }, [lastId]);
+    setImageUrl(`${isPublic ? "" : "/users/me"}/images?lastId=${lastId}`);
+  }, [lastId, isPublic]);
 
   return (
     <ImageContext.Provider
       value={{
-        images,
+        images: isPublic ? images : myImages,
         setImages,
-        myImages,
         setMyImages,
         isPublic,
         setIsPublic,
