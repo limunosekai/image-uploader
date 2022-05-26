@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ImageContext } from "../context/ImageContext";
 import { AuthContext } from "../context/AuthContext";
@@ -11,14 +11,40 @@ function ImagePage() {
   const { images, setImages, setMyImages } = useContext(ImageContext);
   const [me] = useContext(AuthContext);
   const [hasLike, setHasLike] = useState(false);
-  const image = images.find((img) => img._id === imageId);
+  const [image, setImage] = useState();
+  const [error, setError] = useState(false);
+  const imageRef = useRef();
+
+  useEffect(() => {
+    imageRef.current = images.find((img) => img._id === imageId);
+  }, [images, imageId]);
+
+  useEffect(() => {
+    if (imageRef.current) {
+      setImage(imageRef.current);
+    } else {
+      axios
+        .get(`/images/${imageId}`)
+        .then((res) => {
+          setImage(res.data);
+          setError(false);
+        })
+        .catch((err) => {
+          setError(true);
+          toast.error(err.response.data.message);
+        });
+    }
+  }, [imageId]);
 
   useEffect(() => {
     if (me?.sessionId && image?.likes.includes(me.username)) {
       setHasLike(true);
     }
   }, [me?.sessionId, image?.likes]);
-  if (!image) {
+
+  if (error) {
+    return <h3>Error...</h3>;
+  } else if (!image) {
     return <h3>Loading...</h3>;
   }
 

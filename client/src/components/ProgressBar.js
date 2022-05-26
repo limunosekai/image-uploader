@@ -5,7 +5,7 @@ import "./ProgressBar.css";
 const ProgressBar = ({ percent }) => {
   return (
     <div className="progress-bar-wrapper">
-      <div style={{ width: `${percent}%` }}>{percent}%</div>
+      <div style={{ width: `${percent || 0}%` }}>{percent}%</div>
     </div>
   );
 };
