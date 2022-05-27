@@ -32,7 +32,7 @@ const ImageList = () => {
       ref={idx + 1 === images.length ? elementRef : undefined}
     >
       <img
-        src={`http://localhost:4005/uploads/${img.key}`}
+        src={`https://limu-image-uploader.s3.ap-northeast-2.amazonaws.com/raw/${img.key}`}
         alt={img.__filename}
       />
     </Link>

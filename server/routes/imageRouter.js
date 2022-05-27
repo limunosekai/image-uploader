@@ -5,7 +5,6 @@ const { upload } = require("../middleware/imageUpload");
 const fs = require("fs");
 const { promisify } = require("util");
 const mongoose = require("mongoose");
-const user = require("../models/user");
 
 const fileUnlink = promisify(fs.unlink);
 
@@ -23,7 +22,7 @@ imageRouter.post("/", upload.array("image", 5), async (req, res) => {
             username: req.user.username,
           },
           public: req.body.public,
-          key: file.filename,
+          key: file.key.replace("raw/", ""),
           __filename: file.originalname,
         }).save();
         return image;
