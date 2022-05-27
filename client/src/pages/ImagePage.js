@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ImageContext } from "../context/ImageContext";
 import { AuthContext } from "../context/AuthContext";
@@ -13,28 +13,29 @@ function ImagePage() {
   const [hasLike, setHasLike] = useState(false);
   const [image, setImage] = useState();
   const [error, setError] = useState(false);
-  const imageRef = useRef();
 
   useEffect(() => {
-    imageRef.current = images.find((img) => img._id === imageId);
+    const img = images.find((img) => img._id === imageId);
+    if (img) {
+      setImage(img);
+    }
   }, [images, imageId]);
 
   useEffect(() => {
-    if (imageRef.current) {
-      setImage(imageRef.current);
-    } else {
-      axios
-        .get(`/images/${imageId}`)
-        .then((res) => {
-          setImage(res.data);
-          setError(false);
-        })
-        .catch((err) => {
-          setError(true);
-          toast.error(err.response.data.message);
-        });
+    if (image && image?._id === imageId) {
+      return;
     }
-  }, [imageId]);
+    axios
+      .get(`/images/${imageId}`)
+      .then((res) => {
+        setImage(res.data);
+        setError(false);
+      })
+      .catch((err) => {
+        setError(true);
+        toast.error(err.response.data.message);
+      });
+  }, [imageId, image]);
 
   useEffect(() => {
     if (me?.sessionId && image?.likes.includes(me.username)) {
