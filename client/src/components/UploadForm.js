@@ -8,7 +8,7 @@ import "./UploadForm.css";
 const UploadForm = () => {
   const { setImages, setMyImages } = useContext(ImageContext);
   const [files, setFiles] = useState(null);
-  const [percent, setPercent] = useState(0);
+  const [percent, setPercent] = useState([]);
   const [isPublic, setIsPublic] = useState(true);
   const [previews, setPreviews] = useState([]);
   const inputRef = useRef();
@@ -49,14 +49,22 @@ const UploadForm = () => {
           }
           formData.append("Content-Type", file.type);
           formData.append("file", file);
-          return axios.post(presigned.url, formData);
+          return axios.post(presigned.url, formData, {
+            onUploadProgress: (e) => {
+              setPercent((prev) => {
+                const newArr = [...prev];
+                newArr[idx] = Math.round((100 * e.loaded) / e.total);
+                return newArr;
+              });
+            },
+          });
         })
       );
 
       const res = await axios.post("/images", {
         images: [...files].map((file, index) => ({
           imageKey: presignedData.data[index].imageKey,
-          originalname: file.originalname,
+          originalname: file.name,
         })),
         public: isPublic,
       });
@@ -68,58 +76,61 @@ const UploadForm = () => {
 
       toast.success("업로드 성공");
       setTimeout(() => {
-        setPercent(0);
+        setPercent([]);
         setPreviews([]);
         inputRef.current.value = null;
       }, 3000);
     } catch (err) {
       console.error(err.response.data.message);
       toast.error("업로드 실패");
-      setPercent(0);
+      setPercent([]);
       setPreviews([]);
     } finally {
       setIsPublic(true);
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData();
-    for (let file of files) {
-      formData.append("image", file);
-    }
-    formData.append("public", isPublic);
-    try {
-      const res = await axios.post("http://localhost:4005/images", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        onUploadProgress: (e) => {
-          setPercent(Math.round((100 * e.loaded) / e.total));
-        },
-      });
-      if (isPublic) {
-        setImages((prev) => [...res.data, ...prev]);
-      }
-      setMyImages((prev) => [...res.data, ...prev]);
-      toast.success("업로드 성공");
-      setTimeout(() => {
-        setPercent(0);
-        setPreviews([]);
-        inputRef.current.value = null;
-      }, 3000);
-    } catch (err) {
-      console.error(err.response.data.message);
-      toast.error("업로드 실패");
-      setPercent(0);
-      setPreviews([]);
-    } finally {
-      setIsPublic(true);
-    }
-  };
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   const formData = new FormData();
+  //   for (let file of files) {
+  //     formData.append("image", file);
+  //   }
+  //   formData.append("public", isPublic);
+  //   try {
+  //     const res = await axios.post("http://localhost:4005/images", formData, {
+  //       headers: {
+  //         "Content-Type": "multipart/form-data",
+  //       },
+  //       onUploadProgress: (e) => {
+  //         setPercent(Math.round((100 * e.loaded) / e.total));
+  //       },
+  //     });
+  //     if (isPublic) {
+  //       setImages((prev) => [...res.data, ...prev]);
+  //     }
+  //     setMyImages((prev) => [...res.data, ...prev]);
+  //     toast.success("업로드 성공");
+  //     setTimeout(() => {
+  //       setPercent(0);
+  //       setPreviews([]);
+  //       inputRef.current.value = null;
+  //     }, 3000);
+  //   } catch (err) {
+  //     console.error(err.response.data.message);
+  //     toast.error("업로드 실패");
+  //     setPercent(0);
+  //     setPreviews([]);
+  //   } finally {
+  //     setIsPublic(true);
+  //   }
+  // };
 
   const previewImages = previews.map((preview, idx) => (
-    <img key={idx} src={preview.imgSrc} alt="" className="image-preview" />
+    <div key={idx}>
+      <img src={preview.imgSrc} alt="" className="image-preview" />
+      <ProgressBar percent={percent[idx]} />
+    </div>
   ));
 
   const fileNames =
@@ -130,7 +141,6 @@ const UploadForm = () => {
   return (
     <form onSubmit={onSubmit}>
       <div className="image-preview-wrapper">{previewImages}</div>
-      <ProgressBar percent={percent} />
       <div className="file-drop">
         {fileNames}
         <input

@@ -3,7 +3,7 @@ const imageRouter = Router();
 const Image = require("../models/image");
 const { upload } = require("../middleware/imageUpload");
 // const fs = require("fs");
-const { promisify } = require("util");
+// const { promisify } = require("util");
 const mongoose = require("mongoose");
 const { s3, getSignedUrl } = require("../aws");
 const { v4: uuid } = require("uuid");
@@ -47,18 +47,17 @@ imageRouter.post("/", upload.array("image", 5), async (req, res) => {
     const { images, public } = req.body;
 
     const imageDocs = await Promise.all(
-      images.map(
-        (image) =>
-          new Image({
-            user: {
-              _id: req.user.id,
-              name: req.user.name,
-              username: req.user.username,
-            },
-            public,
-            key: image.imageKey,
-            __filename: image.originalname,
-          })
+      images.map((image) =>
+        new Image({
+          user: {
+            _id: req.user.id,
+            name: req.user.name,
+            username: req.user.username,
+          },
+          public,
+          key: image.imageKey,
+          __filename: image.originalname,
+        }).save()
       )
     );
 

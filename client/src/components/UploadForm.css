@@ -48,11 +48,13 @@
 .image-preview-wrapper {
   display: flex;
   flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-around;
 }
 
 .image-preview {
   display: block;
-  width: 15%;
+  width: 140px;
   margin: 10px auto 20px;
   border-radius: 10px;
   transition: all 0.5s;
