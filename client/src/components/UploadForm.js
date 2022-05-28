@@ -33,6 +33,55 @@ const UploadForm = () => {
     setPreviews(imagePreviews);
   };
 
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const presignedData = await axios.post("/images/presigned", {
+        contentTypes: [...files].map((file) => file.type),
+      });
+
+      await Promise.all(
+        [...files].map((file, idx) => {
+          const { presigned } = presignedData.data[idx];
+          const formData = new FormData();
+          for (let key in presigned.fields) {
+            formData.append(key, presigned.fields[key]);
+          }
+          formData.append("Content-Type", file.type);
+          formData.append("file", file);
+          return axios.post(presigned.url, formData);
+        })
+      );
+
+      const res = await axios.post("/images", {
+        images: [...files].map((file, index) => ({
+          imageKey: presignedData.data[index].imageKey,
+          originalname: file.originalname,
+        })),
+        public: isPublic,
+      });
+
+      if (isPublic) {
+        setImages((prev) => [...res.data, ...prev]);
+      }
+      setMyImages((prev) => [...res.data, ...prev]);
+
+      toast.success("업로드 성공");
+      setTimeout(() => {
+        setPercent(0);
+        setPreviews([]);
+        inputRef.current.value = null;
+      }, 3000);
+    } catch (err) {
+      console.error(err.response.data.message);
+      toast.error("업로드 실패");
+      setPercent(0);
+      setPreviews([]);
+    } finally {
+      setIsPublic(true);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
@@ -79,7 +128,7 @@ const UploadForm = () => {
       : previews.map((preview, idx) => <p key={idx}>{preview.fileName}</p>);
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={onSubmit}>
       <div className="image-preview-wrapper">{previewImages}</div>
       <ProgressBar percent={percent} />
       <div className="file-drop">
