@@ -5,6 +5,7 @@ const { upload } = require("../middleware/imageUpload");
 const fs = require("fs");
 const { promisify } = require("util");
 const mongoose = require("mongoose");
+const { s3 } = require("../aws");
 
 const fileUnlink = promisify(fs.unlink);
 
@@ -86,7 +87,16 @@ imageRouter.delete("/:imageId", async (req, res) => {
     if (!image) {
       return res.json({ message: "요청하신 이미지는 이미 삭제되었습니다." });
     }
-    await fileUnlink(`./uploads/${image.key}`);
+    // await fileUnlink(`./uploads/${image.key}`);
+    s3.deleteObject(
+      { Bucket: "limu-image-uploader", Key: `raw/${image.key}` },
+      (err, data) => {
+        if (err) {
+          throw err;
+        }
+        console.log(data);
+      }
+    );
     res.json({ message: "이미지 삭제 완료!", image });
   } catch (err) {
     console.error(err.message);
