@@ -100,7 +100,7 @@ function ImagePage() {
       이미지 페이지 - {imageId}
       <img
         style={{ width: "100%" }}
-        src={`https://limu-image-uploader.s3.ap-northeast-2.amazonaws.com/raw/${image.key}`}
+        src={`https://limu-image-uploader.s3.ap-northeast-2.amazonaws.com/w600/${image.key}`}
         alt={imageId}
       />
       <span>좋아요 {image.likes.length}</span>
