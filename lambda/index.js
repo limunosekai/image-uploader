@@ -26,7 +26,7 @@ exports.handler = async (event) => {
           const newKey = `${name}/${keyOnly}`;
           const resized = await sharp(image.Body)
             .rotate()
-            .resize(width)
+            .resize({ width, height: width, fit: "outside" })
             .toBuffer();
           await s3
             .putObject({
