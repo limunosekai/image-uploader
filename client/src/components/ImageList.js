@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { ImageContext } from "../context/ImageContext";
+import Image from "./Image";
 
 import "./ImageList.css";
 
@@ -31,8 +32,8 @@ const ImageList = () => {
       to={`/images/${img._id}`}
       ref={idx + 1 === images.length ? elementRef : undefined}
     >
-      <img
-        src={`https://limu-image-uploader.s3.ap-northeast-2.amazonaws.com/w140/${img.key}`}
+      <Image
+        imageUrl={`https://d3bpip0r5pyr9z.cloudfront.net/w140/${img.key}`}
         alt={img.__filename}
       />
     </Link>

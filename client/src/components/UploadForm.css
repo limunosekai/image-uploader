@@ -45,6 +45,11 @@
   background-color: rgb(122, 25, 25);
 }
 
+.submit-btn:disabled {
+  background-color: #eee;
+  cursor: wait;
+}
+
 .image-preview-wrapper {
   display: flex;
   flex-wrap: wrap;
